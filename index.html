@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Marco Assistant</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #chat { max-width: 600px; margin: auto; }
+        .msg { margin: 10px 0; }
+        .user { color: rgb(0, 162, 255); }
+        .marco { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Marco Voice Assistant</h1>
+    <div id="chat"></div>
+
+    <input type="text" id="textInput" placeholder="Type your question">
+    <button onclick="sendText()">Send</button>
+
+    <script>
+        const chatDiv = document.getElementById("chat");
+
+        function addMessage(sender, message) {
+            const div = document.createElement("div");
+            div.classList.add("msg", sender);
+            div.textContent = `${sender}: ${message}`;
+            chatDiv.appendChild(div);
+        }
+
+        async function sendText() {
+            const text = document.getElementById("textInput").value;
+            if (!text) return;
+
+            addMessage("user", text);
+
+            const response = await fetch("http://127.0.0.1:8000/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text })
+            });
+
+            const data = await response.json();
+            addMessage("marco", data.marco);
+            document.getElementById("textInput").value = "";
+        }
+    </script>
+</body>
+</html>
